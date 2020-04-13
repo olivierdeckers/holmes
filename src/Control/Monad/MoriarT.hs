@@ -68,6 +68,7 @@ import qualified Data.Primitive.MutVar as MutVar
 import Data.Propagator (Prop)
 import qualified Data.Propagator as Prop
 import Type.Reflection (Typeable)
+import Debug.Trace
 
 -- | The constraint-solving monad transformer. We implement the current
 -- computation context with 'MonadReader', and the current "no goods" list with
@@ -200,9 +201,13 @@ solve Config{..} predicate = do
   output <- Prop.down (predicate (map Prop.up inputs))
   Cell.write output trueR
 
+  trace "Computed the initial values" (return ())
+
+
   _ <- zip [0 ..] inputs & traverse \(major, cell) -> do
     current     <- unsafeRead cell
     refinements <- refine current
+    trace ("Expanded " <> (show major) <> " and found " <> (show $ length refinements) <> " possibilities") (return ())
 
     input <- asum $ CDCL.index major refinements <&> \(rule, content) ->
       fmap Cell (MutVar.newMutVar (rule, content, mempty))

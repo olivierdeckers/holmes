@@ -72,6 +72,7 @@ test-suite examples
 
   other-modules: Futoshiki
                , WaveFunctionCollapse
+               , Aquarium
 
   ghc-options: -Wall -Wextra -threaded
   hs-source-dirs: examples
